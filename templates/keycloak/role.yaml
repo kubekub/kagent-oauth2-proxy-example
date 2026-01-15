@@ -1,0 +1,20 @@
+{{- if .Values.enabled }}
+{{- if .Values.keycloak.enabled }}
+{{- range .Values.keycloak.roles }}
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: {{ .name }}
+spec:
+  forProvider:
+    realmId: {{ $.Values.keycloak.realm.name }}
+    name: {{ .name | quote }}
+  managementPolicies:
+  - '*'
+  providerConfigRef:
+    name: {{ $.Values.keycloak.providerConfigRef.name }}
+    kind: {{ $.Values.keycloak.providerConfigRef.kind }}
+{{- end }}
+{{- end }}
+{{- end }}

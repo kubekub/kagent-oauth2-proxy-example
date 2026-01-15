@@ -1,0 +1,62 @@
+{{- if .Values.enabled }}
+{{- if .Values.keycloak.enabled }}
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: {{ .Values.keycloak.client.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.keycloak.client.name }}-client
+    app.kubernetes.io/component: keycloak-auth
+    app.kubernetes.io/part-of: kagent
+    {{- with .Values.keycloak.client.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  forProvider:
+    # Reference to the kagent realm
+    realmIdRef:
+      name: {{ .Values.keycloak.realm.name }}
+      policy:
+        resolve: Always
+    
+    # Client configuration
+    accessType: {{ .Values.keycloak.client.accessType | quote }}
+    clientId: {{ .Values.keycloak.client.name | quote }}
+    name: {{ .Values.keycloak.client.displayName | quote }}
+    description: {{ .Values.keycloak.client.description | quote }}
+    
+    # Enable service account for client credentials grant
+    serviceAccountsEnabled: {{ .Values.keycloak.client.serviceAccountsEnabled }}
+    
+    # OAuth2/OIDC settings
+    standardFlowEnabled: {{ .Values.keycloak.client.standardFlowEnabled }}
+    directAccessGrantsEnabled: {{ .Values.keycloak.client.directAccessGrantsEnabled }}
+    implicitFlowEnabled: {{ .Values.keycloak.client.implicitFlowEnabled }}
+    
+    # URLs and redirects
+    baseUrl: "https://{{ .Values.global.app.dns }}"
+    rootUrl: "https://{{ .Values.global.app.dns }}"
+    adminUrl: "https://{{ .Values.global.app.dns }}"
+    validRedirectUris:
+      - "https://{{ .Values.global.app.dns }}/oauth2/callback"
+      - "https://{{ .Values.global.app.dns }}/*"
+    webOrigins:
+      - "https://{{ .Values.global.app.dns }}"
+      - "+"  # Allow all origins from redirectUris
+    
+    # Consent and scope settings
+    consentRequired: {{ .Values.keycloak.client.consentRequired }}
+    fullScopeAllowed: {{ .Values.keycloak.client.fullScopeAllowed }}
+    
+    # Client authentication
+    clientAuthenticatorType: {{ .Values.keycloak.client.clientAuthenticatorType | quote }}
+  managementPolicies:
+  - '*'
+  # Reference to Keycloak provider configuration
+  providerConfigRef:
+    name: {{ .Values.keycloak.providerConfigRef.name }}
+    kind: {{ .Values.keycloak.providerConfigRef.kind }}
+  writeConnectionSecretToRef:
+    name: {{ .Values.keycloak.client.secretName }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,36 @@
+{{- if .Values.enabled }}
+{{- if .Values.gatewayApi.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.gatewayApi.gateway.name }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.gatewayApi.gateway.certManager.clusterIssuer }}
+spec:
+  gatewayClassName: {{ .Values.gatewayApi.gateway.className }}
+
+  listeners:
+  - name: {{ .Values.gatewayApi.gateway.listeners.http.name }}
+    port: {{ .Values.gatewayApi.gateway.listeners.http.port }}
+    protocol: {{ .Values.gatewayApi.gateway.listeners.http.protocol }}
+    hostname: {{ .Values.global.app.dns }}
+    allowedRoutes:
+      namespaces:
+        from: {{ .Values.gatewayApi.gateway.allowedRoutes.from }}
+  - name: {{ .Values.gatewayApi.gateway.listeners.https.name }}
+    port: {{ .Values.gatewayApi.gateway.listeners.https.port }}
+    protocol: {{ .Values.gatewayApi.gateway.listeners.https.protocol }}
+    hostname: {{ .Values.global.app.dns }}
+    tls:
+      mode: {{ .Values.gatewayApi.gateway.listeners.https.tls.mode }}
+      certificateRefs:
+      - group: ''
+        name: {{ .Values.gatewayApi.gateway.listeners.https.tls.certificateSecretName }}
+        kind: Secret
+      options:
+        gateway.networking.k8s.io/tls-version: {{ .Values.gatewayApi.gateway.listeners.https.tls.version | quote }}
+    allowedRoutes:
+      namespaces:
+        from: {{ .Values.gatewayApi.gateway.allowedRoutes.from }}
+{{- end }}
+{{- end }}

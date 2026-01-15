@@ -1,0 +1,28 @@
+{{- if .Values.enabled }}
+{{- if .Values.keycloak.enabled }}
+apiVersion: client.keycloak.m.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: {{ .Values.keycloak.protocolMapper.name }}
+spec:
+  forProvider:
+    clientIdRef: 
+      name: {{ .Values.keycloak.client.name }}
+    config:
+      usermodel.clientRoleMapping.clientId: {{ .Values.keycloak.client.name }}
+      access.token.claim: {{ .Values.keycloak.protocolMapper.config.accessTokenClaim | quote }}
+      claim.name: {{ .Values.keycloak.protocolMapper.config.claimName }}
+      id.token.claim: {{ .Values.keycloak.protocolMapper.config.idTokenClaim | quote }}
+      multivalued: {{ .Values.keycloak.protocolMapper.config.multivalued | quote }}
+    name: {{ .Values.keycloak.protocolMapper.displayName }}
+    protocol: {{ .Values.keycloak.protocolMapper.protocol }}
+    protocolMapper: {{ .Values.keycloak.protocolMapper.protocolMapper }}
+    realmId: {{ .Values.keycloak.realm.name }}
+  managementPolicies:
+  - '*'
+  # Reference to Keycloak provider configuration
+  providerConfigRef:
+    name: {{ .Values.keycloak.providerConfigRef.name }}
+    kind: {{ .Values.keycloak.providerConfigRef.kind }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: kagent
+description: Helm chart for kagent gateway api with oauth2-proxy authentication and keycloak integration
+version: 0.1.0
+dependencies:
+- name:  oauth2-proxy
+  version: 8.5.1
+  repository: https://oauth2-proxy.github.io/manifests
+  alias: oauth2-proxy
+  condition: oauth2-proxy.enabled

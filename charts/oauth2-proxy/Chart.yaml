@@ -1,0 +1,33 @@
+annotations:
+  artifacthub.io/changes: |
+    - kind: changed
+      description: update azuread-app chart
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/operator: "false"
+  artifacthub.io/prerelease: "false"
+  category: Security
+apiVersion: v2
+dependencies:
+- alias: oauth2-proxy
+  condition: oauth2-proxy.enabled
+  name: oauth2-proxy
+  repository: https://oauth2-proxy.github.io/manifests
+  version: 8.5.1
+description: 'A comprehensive Helm chart that automatically configures OAuth2 authentication
+  for insecure applications in Istio service mesh environments. Integrates OAuth2
+  Proxy with Azure Entra ID, certificate management, Istio ingress configuration,
+  and external secrets for seamless authentication workflows. '
+keywords:
+- oauth2
+- authentication
+- istio
+- azure
+- azuread
+- proxy
+- security
+- service-mesh
+- ingress
+kubeVersion: '>=1.19.0-0'
+name: oauth2-proxy
+type: application
+version: 0.0.1

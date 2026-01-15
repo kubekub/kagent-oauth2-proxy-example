@@ -1,0 +1,32 @@
+{{- if .Values.enabled }}
+{{- if .Values.keycloak.enabled }}
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientDefaultScopes
+metadata:
+  annotations:
+    meta.upbound.io/example-id: openidclient/v1alpha1/clientdefaultscopes
+  labels:
+    {{- with .Values.keycloak.client.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  name: client-default-scopes
+spec:
+  forProvider:
+    clientIdSelector:
+      matchLabels:
+        {{- with .Values.keycloak.client.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    defaultScopes:
+    {{- range .Values.keycloak.client.defaultScopes }}
+    - {{ . | quote }}
+    {{- end }}
+    realmId: {{ .Values.keycloak.realm.name }}
+  managementPolicies:
+  - '*'
+  # Reference to Keycloak provider configuration
+  providerConfigRef:
+    name: {{ .Values.keycloak.providerConfigRef.name }}
+    kind: {{ .Values.keycloak.providerConfigRef.kind }}
+{{- end }}
+{{- end }}

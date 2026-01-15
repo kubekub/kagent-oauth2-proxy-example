@@ -1,0 +1,22 @@
+{{- if .Values.enabled }}
+{{- if .Values.keycloak.enabled }}
+apiVersion: realm.keycloak.m.crossplane.io/v1alpha1
+kind: Realm
+metadata:
+  name: {{ .Values.keycloak.realm.name }}
+  labels:
+    testing.upbound.io/example-name: {{ .Values.keycloak.realm.name }}
+spec:
+  forProvider:
+    attributes:
+      {{- toYaml .Values.keycloak.realm.attributes | nindent 6 }}
+    displayName: {{ .Values.keycloak.realm.displayName }}
+    enabled: {{ .Values.keycloak.realm.enabled }}
+    realm: {{ .Values.keycloak.realm.name }}
+  managementPolicies:
+  - '*'
+  providerConfigRef:
+    name: {{ .Values.keycloak.providerConfigRef.name }}
+    kind: {{ .Values.keycloak.providerConfigRef.kind }}
+{{- end }}
+{{- end }}
